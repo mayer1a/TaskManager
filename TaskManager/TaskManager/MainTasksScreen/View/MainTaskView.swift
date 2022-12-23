@@ -21,6 +21,15 @@ final class MainTaskView: UITableView {
         return UIBarButtonItem()
     }()
 
+    let backBarButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(.init(systemName: "chevron.backward"), for: .normal)
+        button.setTitle("Назад", for: .normal)
+        button.sizeToFit()
+
+        return button
+    }()
+
     // MARK: - Construction
 
     init(addTaskTableViewDelegate: AddTaskTableViewDelegate?) {
@@ -55,7 +64,6 @@ final class MainTaskView: UITableView {
         addTaskBarButton.style = .plain
         addTaskBarButton.target = self
         addTaskBarButton.action = #selector(addTaskButtonTapped(_:))
-        addTaskBarButton.isEnabled = false
     }
 
     @objc private func addTaskButtonTapped(_ sender: UIBarButtonItem) {

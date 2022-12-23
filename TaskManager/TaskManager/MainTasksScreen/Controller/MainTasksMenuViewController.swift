@@ -11,8 +11,9 @@ final class MainTasksMenuViewController: UIViewController {
 
     // MARK: - Private properties
 
-    private var tasksCount: Int = 1
-    private var addedTasks: [String?] = [""] {
+    private var tasksCount: Int = 0
+    private var selectedSuperTaskNumber: Int = 0
+    private var addedTasks: [Task] = [] {
         didSet {
             onSetupNewValue()
         }
@@ -31,15 +32,52 @@ final class MainTasksMenuViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setupTask()
+
         mainTaskView?.delegate = self
         mainTaskView?.dataSource = self
 
         mainTaskView?.register(MainTaskTableViewCell.self, forCellReuseIdentifier: MainTaskTableViewCell.cellId)
 
-        navigationItem.rightBarButtonItem = mainTaskView?.addTaskBarButton
+        configureNavigationBar()
     }
 
     // MARK: - Private functions
+
+    private func configureNavigationBar() {
+        if navigationController?.viewControllers.first !== self {
+            guard let backBarButton = mainTaskView?.backBarButton else { return }
+
+            backBarButton.addTarget(self, action: #selector(returnSubtasks), for: .touchUpInside)
+
+            navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backBarButton)
+        } else {
+            navigationItem.leftBarButtonItem = nil
+        }
+
+        navigationItem.rightBarButtonItem = mainTaskView?.addTaskBarButton
+
+        if tasksCount == 1, addedTasks.first?.title.isEmpty == true {
+            navigationItem.rightBarButtonItem?.isEnabled = false
+        }
+    }
+
+    private func setupTask() {
+        if addedTasks.isEmpty {
+            addedTasks.append(SubTask(title: ""))
+        }
+    }
+
+    private func addedSubtasksToSuperTask(_ subtasks: [Task]) {
+        if let superTask = addedTasks[selectedSuperTaskNumber] as? SuperTask {
+            superTask.subtasks = subtasks
+        } else {
+            let superTask = SuperTask(title: addedTasks[selectedSuperTaskNumber].title)
+            superTask.subtasks.append(contentsOf: subtasks)
+
+            addedTasks[selectedSuperTaskNumber] = superTask
+        }
+    }
 
     private func onSetupNewValue() {
         tasksCount = addedTasks.count
@@ -68,13 +106,22 @@ final class MainTasksMenuViewController: UIViewController {
     private func appendTask(from textField: UITextField) {
         guard
             let cell = textField.superview?.superview as? MainTaskTableViewCell,
-            let row = mainTaskView?.indexPath(for: cell)?.row
+            let row = mainTaskView?.indexPath(for: cell)?.row,
+            let text = textField.text,
+            addedTasks[row].title != text
         else {
             return
         }
 
-        addedTasks[row] = textField.text
-        navigationItem.rightBarButtonItem?.isEnabled = false
+        addedTasks[row] = SubTask(title: text)
+    }
+
+    private func resignFirstResponderIfNeeded() {
+        for cellNumber in 0..<tasksCount {
+            let cell = mainTaskView?.cellForRow(at: IndexPath(row: cellNumber, section: 0))
+            (cell as? MainTaskTableViewCell)?.taskTextField.resignFirstResponder()
+        }
+
     }
 
     @objc private func taskCompletedButtonTapped(_ sender: UIButton) {
@@ -99,6 +146,21 @@ final class MainTasksMenuViewController: UIViewController {
         }
     }
 
+    @objc private func returnSubtasks() {
+        resignFirstResponderIfNeeded()
+
+        navigationController?.popViewController(animated: true)
+
+        guard
+            let previousViewController = navigationController?.topViewController as? MainTasksMenuViewController,
+            previousViewController !== self
+        else {
+            return
+        }
+
+        previousViewController.addedSubtasksToSuperTask(addedTasks)
+    }
+
 }
 
 // MARK: - Extensions
@@ -106,11 +168,13 @@ final class MainTasksMenuViewController: UIViewController {
 extension MainTasksMenuViewController: AddTaskTableViewDelegate {
 
     func addTaskButtonDidTapped() {
-        addedTasks.append("")
+        addedTasks.append(SubTask(title: ""))
         
         mainTaskView?.beginUpdates()
         mainTaskView?.insertRows(at: [IndexPath(row: tasksCount - 1, section: 0)], with: .automatic)
         mainTaskView?.endUpdates()
+
+        navigationItem.rightBarButtonItem?.isEnabled = false
     }
 }
 
@@ -129,11 +193,11 @@ extension MainTasksMenuViewController: UITableViewDelegate, UITableViewDataSourc
 
         guard let cell = reusableCell as? MainTaskTableViewCell else { return UITableViewCell() }
 
-        cell.configureTaskTextField(with: addedTasks[indexPath.row])
+        cell.configureTaskTextField(with: addedTasks[indexPath.row].title)
         cell.taskTextField.delegate = self
         cell.taskCheckButton.addTarget(self, action: #selector(taskCompletedButtonTapped(_:)), for: .touchUpInside)
 
-        if tasksCount > 1, indexPath.row == tasksCount - 1 {
+        if indexPath.row == tasksCount - 1, !cell.taskTextField.hasText {
             cell.taskTextField.becomeFirstResponder()
         }
 
@@ -149,7 +213,15 @@ extension MainTasksMenuViewController: UITableViewDelegate, UITableViewDataSourc
     }
 
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        navigationController?.pushViewController(MainTasksMenuViewController(), animated: true)
+        selectedSuperTaskNumber = indexPath.row
+
+        let nextTaskViewController = MainTasksMenuViewController()
+
+        if let selectTask = addedTasks[indexPath.row] as? SuperTask {
+            nextTaskViewController.addedTasks = selectTask.subtasks
+        }
+        (tableView.cellForRow(at: indexPath) as? MainTaskTableViewCell)?.taskTextField.resignFirstResponder()
+        navigationController?.pushViewController(nextTaskViewController, animated: true)
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
