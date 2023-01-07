@@ -12,6 +12,9 @@
 		49024E12295440E2008E382B /* MainTasksMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49024E11295440E2008E382B /* MainTasksMenuViewController.swift */; };
 		49024E17295440E3008E382B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49024E16295440E3008E382B /* Assets.xcassets */; };
 		49024E1A295440E3008E382B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 49024E18295440E3008E382B /* LaunchScreen.storyboard */; };
+		49024E262954784F008E382B /* MainTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49024E252954784F008E382B /* MainTaskView.swift */; };
+		49024E2829547DBC008E382B /* MainTaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49024E2729547DBC008E382B /* MainTaskTableViewCell.swift */; };
+		49024E2B295589F7008E382B /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49024E2A295589F7008E382B /* Task.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +25,9 @@
 		49024E16295440E3008E382B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		49024E19295440E3008E382B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		49024E1B295440E3008E382B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		49024E252954784F008E382B /* MainTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTaskView.swift; sourceTree = "<group>"; };
+		49024E2729547DBC008E382B /* MainTaskTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTaskTableViewCell.swift; sourceTree = "<group>"; };
+		49024E2A295589F7008E382B /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,14 +60,57 @@
 		49024E0C295440E2008E382B /* TaskManager */ = {
 			isa = PBXGroup;
 			children = (
-				49024E0D295440E2008E382B /* AppDelegate.swift */,
-				49024E0F295440E2008E382B /* SceneDelegate.swift */,
-				49024E11295440E2008E382B /* MainTasksMenuViewController.swift */,
+				49024E21295477D6008E382B /* MainTasksScreen */,
+				49024E24295477FE008E382B /* Fundamental */,
 				49024E16295440E3008E382B /* Assets.xcassets */,
 				49024E18295440E3008E382B /* LaunchScreen.storyboard */,
 				49024E1B295440E3008E382B /* Info.plist */,
 			);
 			path = TaskManager;
+			sourceTree = "<group>";
+		};
+		49024E21295477D6008E382B /* MainTasksScreen */ = {
+			isa = PBXGroup;
+			children = (
+				49024E29295589EA008E382B /* Model */,
+				49024E23295477F5008E382B /* View */,
+				49024E22295477ED008E382B /* Controller */,
+			);
+			path = MainTasksScreen;
+			sourceTree = "<group>";
+		};
+		49024E22295477ED008E382B /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				49024E11295440E2008E382B /* MainTasksMenuViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		49024E23295477F5008E382B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				49024E252954784F008E382B /* MainTaskView.swift */,
+				49024E2729547DBC008E382B /* MainTaskTableViewCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		49024E24295477FE008E382B /* Fundamental */ = {
+			isa = PBXGroup;
+			children = (
+				49024E0D295440E2008E382B /* AppDelegate.swift */,
+				49024E0F295440E2008E382B /* SceneDelegate.swift */,
+			);
+			path = Fundamental;
+			sourceTree = "<group>";
+		};
+		49024E29295589EA008E382B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				49024E2A295589F7008E382B /* Task.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -134,8 +183,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49024E262954784F008E382B /* MainTaskView.swift in Sources */,
 				49024E12295440E2008E382B /* MainTasksMenuViewController.swift in Sources */,
+				49024E2829547DBC008E382B /* MainTaskTableViewCell.swift in Sources */,
 				49024E0E295440E2008E382B /* AppDelegate.swift in Sources */,
+				49024E2B295589F7008E382B /* Task.swift in Sources */,
 				49024E10295440E2008E382B /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
